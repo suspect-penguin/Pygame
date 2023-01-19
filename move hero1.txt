@@ -1,0 +1,74 @@
+import pygame
+import sys
+import os
+
+
+def load_image(name, colorkey=-1):
+    fullname = os.path.join('data', name)
+    if not os.path.isfile(fullname):
+        sys.exit()
+    image = pygame.image.load(fullname)
+    if colorkey is not None:
+        image = image.convert()
+        if colorkey == -1:
+            colorkey = image.get_at((0, 0))
+        image.set_colorkey(colorkey)
+    else:
+        image = image.convert_alpha()
+    return image
+
+
+
+
+if __name__ == '__main__':
+    pygame.init()
+    screen = pygame.display.set_mode((300, 300))
+    ball = load_image('walk6.png')
+    ballX = 0
+    ballY = 0
+    speed = 5
+    to_left = False
+    to_right = False
+    to_up = False
+    to_down = False
+    while True:
+        screen.fill((255, 255, 255))
+        pygame.time.delay(30)
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    to_left = True
+                    ball = load_image('walk11.png')
+                if event.key == pygame.K_RIGHT:
+                    to_right = True
+                    ball = load_image('walk1.png')
+                if event.key == pygame.K_DOWN:
+                    to_down = True
+                if event.key == pygame.K_UP:
+                    to_up = True
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_LEFT:
+                    to_left = False
+                    ball = load_image('walk21.png')
+                if event.key == pygame.K_RIGHT:
+                    to_right = False
+                    ball = load_image('walk2.png')
+                if event.key == pygame.K_DOWN:
+                    to_down = False
+                if event.key == pygame.K_UP:
+                    to_up = False
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+        if to_right:
+            ballX += speed
+        if to_left:
+            ballX -= speed
+        if to_down:
+            ballY += speed
+        if to_up:
+            ballY -= speed
+        screen.blit(ball, (ballX, ballY))
+        pygame.display.update()
+    pygame.quit()
+
