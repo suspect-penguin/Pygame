@@ -6,7 +6,6 @@ from pygame_menu import themes
 import time
 from datetime import timedelta
 import sqlite3
-from random import choice
 
 
 #parser = argparse.ArgumentParser()
@@ -114,7 +113,7 @@ while on_off:
     pygame.display.flip()
 
 
-screen_size = (600, 600)
+screen_size = (800, 800)
 screen = pygame.display.set_mode(screen_size)
 kills = 0
 kills_on_level = 0
@@ -282,6 +281,7 @@ is_game = False
 is_results = False
 is_start_screen = False
 is_about_game = False
+is_death = False
 
 
 def Opisanie():
@@ -387,7 +387,10 @@ def start_screen():
 
 
 def death():
-    global start_time, is_about_game, is_game, is_results, is_start_screen
+    global is_about_game, is_game, is_results, is_start_screen
+    screen_size = (600, 600)
+    screen = pygame.display.set_mode(screen_size)
+    pygame.display.set_caption('Гибель персонажа')
     fon = pygame.transform.scale(load_image('fon1.png'), screen_size)
     screen.blit((fon), (0, 0))
 
@@ -425,6 +428,9 @@ def death():
 
 def pobeda():
     global is_about_game, is_game, is_results, is_start_screen
+    pygame.display.set_caption('Гибель персонажа')
+    screen_size = (600, 600)
+    screen = pygame.display.set_mode(screen_size)
     fon = pygame.transform.scale(load_image('fon1.png'), screen_size)
     screen.blit((fon), (0, 0))
 
@@ -512,33 +518,29 @@ def generate_level(level):
 
 
 def move(hero, movement):
+    global is_death
     x, y = hero.pos
     if movement == "up":
         if y > 0 and level_map[y - 1][x] in [".", ",", "|", "~", '%', '!']:
             if level_map[y - 1][x] == '%':
-                death()
+                is_death = True
             hero.move(x, y - 1)
     elif movement == "down":
         if y < max_y and level_map[y + 1][x] in [".", ",", "|", "~", '%', '!']:
             if level_map[y + 1][x] == '%':
-                death()
+                is_death = True
             hero.move(x, y + 1)
     elif movement == "left":
         if x > 0 and level_map[y][x - 1] in [".", ",", "|", "~", '%', '!']:
             if level_map[y][x - 1] == '%':
-                death()
+                is_death = True
             hero.move(x - 1, y)
     elif movement == "right":
         if x < max_x and level_map[y][x + 1] in [".", ",", "|", "~", '%', '!']:
             if level_map[y][x + 1] == '%':
-                death()
+                is_death = True
             hero.move(x + 1, y)
-
-
-pygame.display.set_caption('Кротовые приключения')
 start_screen()
-screen_size = (600, 600)
-screen = pygame.display.set_mode(screen_size)
 level_map = load_level(map_file)
 hero, max_x, max_y = generate_level(level_map)
 camera = Camera(hero)
@@ -552,6 +554,8 @@ while running:
     if is_results:
         pass
     if is_game:
+        screen_size = (600, 600)
+        screen = pygame.display.set_mode(screen_size)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -588,6 +592,28 @@ while running:
             f = 0
             next_level = False
             kills_on_level = 0
+        if is_death:
+            teleport_group = pygame.sprite.Group()
+            enemy_group = pygame.sprite.Group()
+            sprite_group = SpriteGroup()
+            hero_group = SpriteGroup()
+            n_enemies = 0
+            tel_x, tel_y = 0, 0
+            screen.fill((0, 0, 0))
+            map_file = 'project1 (1).txt'
+            level_map = load_level(map_file)
+            hero, max_x, max_y = generate_level(level_map)
+            camera = Camera(hero)
+            camera.update(hero)
+            f = 0
+            next_level = False
+            kills_on_level = 0
+            kills = 0
+            is_death = False
+            is_dead_boss = False
+            is_pobeda = False
+            priz_x, priz_y = 0, 0
+            death()
         if is_dead_boss:
             Priz('priz', priz_x, priz_y)
         if is_pobeda:
