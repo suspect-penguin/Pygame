@@ -331,6 +331,7 @@ def button_pressed(event_pos):
 
 def start_screen():
     global sizes_buttons, is_about_game, is_game, is_results, is_start_screen
+    pygame.display.set_caption('Заичьи приключения')
     screen_size = (800, 800)
     screen = pygame.display.set_mode(screen_size)
     intro_text = ["Играть", "", 'Лучшие результаты', '', '',
@@ -390,7 +391,6 @@ def death():
     global is_about_game, is_game, is_results, is_start_screen
     screen_size = (600, 600)
     screen = pygame.display.set_mode(screen_size)
-    pygame.display.set_caption('Гибель персонажа')
     fon = pygame.transform.scale(load_image('fon1.png'), screen_size)
     screen.blit((fon), (0, 0))
 
